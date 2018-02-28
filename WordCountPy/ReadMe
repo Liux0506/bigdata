@@ -1,0 +1,36 @@
+##本地测试命令
+echo "Hello World Bye World World" | python mapper.py | sort | python reduce.py
+
+##hadoop测试命令
+cd /usr/hdp/2.5.3.0-37
+find ./ -name "hadoop-streaming*.jar"
+./hadoop-mapreduce/hadoop-streaming.jar
+./hadoop-mapreduce/hadoop-streaming-2.7.3.2.5.3.0-37.jar
+#将本地输入文件上传Hdfs
+hadoop fs -put /data/etlcj/lx/python/wordcount /user/etlcj/lx
+
+###执行脚本run.sh
+#!/bin/sh
+
+cd /data/etlcj/lx/python/wordcount/
+#删除输出文件
+hadoop fs -rm -r /user/etlcj/lx/output
+
+hadoop jar /usr/hdp/2.5.3.0-37/hadoop-mapreduce/hadoop-streaming.jar \
+-input /user/etlcj/lx/wordcount/input \
+-output /user/etlcj/lx/output \
+-mapper "python map.py" \
+-reducer "python reduce.py" \
+-file map.py \
+-file reduce.py
+
+hadoop fs -cat /user/etlcj/lx/output/part-00000
+####end run.sh
+
+
+1、Streaming的作用
+Hadoop Streaming框架，最大的好处是，让任何语言编写的map, reduce程序能够在hadoop集群上运行；map/reduce程序只要遵循从标准输入stdin读，写出到标准输出stdout即可
+其次，容易进行单机调试，通过管道前后相接的方式就可以模拟streaming, 在本地完成map/reduce程序的调试
+# cat inputfile | mapper | sort | reducer > output
+最后，streaming框架还提供了作业提交时的丰富参数控制，直接通过streaming参数，而不需要使用java语言修改；很多mapreduce的高阶功能，都可以通过steaming参数的调整来完成
+
