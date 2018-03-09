@@ -11,8 +11,8 @@ import sys,os,ftplib,socket
 
 Host="132.121.126.87"
 Port=2121
-User="kaitong"
-Password="kai!@#tong"
+User="*****"    #需手动输入
+Password="******"   #需手动输入
 
 city=sys.argv[1]
 date=sys.argv[2]
